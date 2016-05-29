@@ -1,0 +1,39 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+
+import weka.classifiers.functions.MultilayerPerceptron;
+import weka.core.Instances;
+
+public class Test {
+	public static void main(String[] args) throws Exception {
+		BufferedReader breader = null;
+		breader = new BufferedReader (new FileReader("C:/Users/TrainData.arff"));
+		Instances train = new Instances (breader);
+		train.setClassIndex(train.numAttributes()-1);
+		
+		breader = new BufferedReader (new FileReader ("C:/Users/TestData.arff"));
+		Instances test = new Instances (breader);
+		test.setClassIndex (train.numAttributes()-1);
+		
+		breader.close();
+		
+		MultilayerPerceptron tree = new MultilayerPerceptron(); 		        //new instances of tree 
+		                             //tree.setOptions("-U"); 
+                        	            //set the options 
+		tree.buildClassifier(train);
+		Instances labeled = new Instances(test);
+		
+		// label instances 
+		for (int i = 0; i < test.numInstances(); i++) {
+			double clsLabel = tree.classifyInstance(test.instance(i));
+			labeled.instance(i).setClassValue(clsLabel);
+		}
+		// save labeled data 
+		BufferedWriter writer = new BufferedWriter(new FileWriter("C:/Users/MultilayerPerceptron.arff"));
+		writer.write(labeled.toString());
+		writer.close();
+		}
+		
+	}
